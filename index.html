@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0}</style>
+<title>Fiche de théorie musicale</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: titre, bandeau tonique, onglets (gammes, modes, accords, cadences, progressions, notions), contenu de l'onglet actif. */
+:root{
+  --bg:#f3f5f8; --surface:#ffffff; --fg:#14202e; --muted:#5a6878; --line:#d9e0e8;
+  --ink:#1b2f4b;
+  --a:#2f6fdb;   /* ton, tonique, conclusive */
+  --b:#e08a00;   /* demi-ton, sous-dominante, suspensive */
+  --c:#c0267a;   /* ton et demi, dominante, surprise, altéré */
+  --chip:#e8edf3; --chip-fg:#14202e; --on-accent:#ffffff;
+  --f-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --f-body:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1722; --surface:#172231; --fg:#e8eef6; --muted:#9aa9ba; --line:#2a3a4e;
+    --ink:#dbe7fb; --a:#6da2ff; --b:#f2a93b; --c:#ee6fb0;
+    --chip:#223348; --chip-fg:#e8eef6; --on-accent:#0f1722; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1722; --surface:#172231; --fg:#e8eef6; --muted:#9aa9ba; --line:#2a3a4e;
+  --ink:#dbe7fb; --a:#6da2ff; --b:#f2a93b; --c:#ee6fb0;
+  --chip:#223348; --chip-fg:#e8eef6; --on-accent:#0f1722; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.5;
+  padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.stack{display:flex;flex-direction:column;gap:16px}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(1.7rem,6vw,2.4rem);line-height:1.1;margin:0;color:var(--ink);text-wrap:balance}
+.sub{margin:6px 0 0;color:var(--muted)}
+h2.lab{font:600 .72rem var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{font:500 .9rem var(--f-body);color:var(--chip-fg);background:var(--chip);border:1px solid transparent;border-radius:7px;padding:5px 11px;cursor:pointer}
+.chips button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+button:focus-visible,summary:focus-visible{outline:2px solid var(--a);outline-offset:2px}
+.tabs{display:flex;gap:2px;overflow-x:auto;border-bottom:1px solid var(--line);scrollbar-width:thin}
+.tabs button{font:600 .92rem var(--f-body);color:var(--muted);background:none;border:0;border-bottom:3px solid transparent;padding:9px 12px;cursor:pointer;white-space:nowrap;margin-bottom:-1px}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--a)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+.card header{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin-bottom:12px}
+.card h3{font-family:var(--f-display);font-weight:700;font-size:1.2rem;margin:0;color:var(--ink)}
+.card p{margin:12px 0 0;color:var(--muted);font-size:.9rem}
+.card p b,.panel p b{color:var(--fg);font-weight:600}
+.sec{font-family:var(--f-display);font-weight:700;font-size:1.05rem;color:var(--ink);margin:6px 0 -4px}
+.mono{font:600 .85rem var(--f-mono);color:var(--muted)}
+.hint{margin:0;color:var(--muted);font-size:.9rem}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.85rem}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{display:inline-block;width:22px;height:5px;border-radius:3px}
+.legend .ring{width:14px;height:14px;border-radius:50%;border:2px solid var(--c)}
+.legend b.f{display:inline-grid;place-items:center;width:1.7rem;height:1.2rem;border-radius:4px;font:600 .68rem var(--f-mono);color:var(--on-accent)}
+/* échelle */
+.grid{display:grid;grid-template-columns:repeat(7,2.1rem 1fr) 2.1rem;align-items:center;row-gap:6px}
+.deg{font:600 .72rem var(--f-mono);color:var(--muted);text-align:center;white-space:nowrap}
+.deg.alt{color:var(--c)}
+.note{width:2.1rem;height:2.1rem;border-radius:50%;display:grid;place-items:center;font:600 .76rem var(--f-body);
+  background:var(--chip);color:var(--chip-fg);border:2px solid transparent;position:relative;z-index:1;white-space:nowrap}
+.note.tonic{background:var(--ink);color:var(--bg)}
+.note.alt{border-color:var(--c)}
+.link{height:5px;border-radius:3px;margin-inline:-2px}
+.t{background:var(--a)} .d{background:var(--b)} .td{background:var(--c)}
+.pill{justify-self:center;font:600 .78rem var(--f-mono);white-space:nowrap}
+.pill.t{background:none;color:var(--a)} .pill.d{background:none;color:var(--b)} .pill.td{background:none;color:var(--c)}
+.meta{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:10px;font-size:.85rem;color:var(--muted)}
+.meta b{color:var(--fg);font-weight:600}
+/* accords en chaîne */
+.tag{font:600 .7rem var(--f-body);letter-spacing:.06em;text-transform:uppercase;border:1.5px solid currentColor;border-radius:5px;padding:1px 7px}
+.k-concl{color:var(--a)} .k-susp{color:var(--b)} .k-surp{color:var(--c)}
+.num{margin-left:auto;font:600 .95rem var(--f-mono);color:var(--muted)}
+.only{font:500 .78rem var(--f-body);color:var(--muted)}
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.ch{display:flex;flex-direction:column;align-items:center;min-width:4.2rem;padding:6px 10px 7px;border-radius:8px;background:var(--chip);border-bottom:4px solid var(--muted)}
+.ch .r{font:600 .78rem var(--f-mono);color:var(--muted)}
+.ch .n{font:600 1.05rem var(--f-body);color:var(--chip-fg);white-space:nowrap}
+.ch.goal{border-bottom-color:currentColor}
+.arrow{color:var(--muted);font-size:1.1rem}
+.it{display:flex;align-items:center;gap:8px}
+.bars{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.bars .ch{min-width:0}
+/* tableau des accords */
+.hd,.row{display:grid;grid-template-columns:3.2rem 1fr 1fr;gap:8px;align-items:center}
+.hd{font:600 .68rem var(--f-body);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding:0 0 6px;border-bottom:1px solid var(--line)}
+.row{padding:8px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.fn{display:grid;place-items:center;height:1.7rem;border-radius:5px;font:600 .72rem var(--f-mono);color:var(--on-accent)}
+.fT{background:var(--a)} .fSD{background:var(--b)} .fD{background:var(--c)}
+.c{display:flex;flex-direction:column;min-width:0}
+.c .r{font:600 .74rem var(--f-mono);color:var(--muted)}
+.c .n{font:600 1.05rem var(--f-body);color:var(--chip-fg);overflow-wrap:anywhere}
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.bc{background:var(--chip);border-radius:8px;padding:8px 10px;min-width:0}
+.bc .r{font:600 .74rem var(--f-mono);color:var(--muted)}
+.bc .n{font:600 1.05rem var(--f-body);color:var(--chip-fg);overflow-wrap:anywhere}
+.bc .d{font-size:.78rem;color:var(--muted);line-height:1.3}
+/* notions */
+details{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:0 16px}
+summary{cursor:pointer;font:600 1rem var(--f-body);color:var(--ink);padding:13px 0}
+details[open] summary{border-bottom:1px solid var(--line);margin-bottom:10px}
+details p,details ul{margin:0 0 12px;font-size:.92rem}
+details ul{padding-left:1.1rem;display:flex;flex-direction:column;gap:4px}
+@media (prefers-reduced-motion:no-preference){.chips button{transition:background .15s,color .15s}}
+</style>
+
+<div class="wrap">
+  <div>
+    <h1>Fiche de théorie musicale</h1>
+    <p class="sub">Gammes, modes, accords, cadences et progressions, dans la tonique de ton choix.</p>
+  </div>
+
+  <div class="panel">
+    <h2 class="lab">Tonique</h2>
+    <div class="chips" id="tonics" role="group" aria-label="Tonique"></div>
+  </div>
+
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Sections"></nav>
+  <main class="stack" id="view"></main>
+</div>
+
+<script>
+(function(){
+  var LET=['Do','Ré','Mi','Fa','Sol','La','Si'], NAT=[0,2,4,5,7,9,11];
+  var ACC={'-2':'♭♭','-1':'♭','0':'','1':'♯','2':'♯♯'};
+  var TON=[['Do',0,0],['Do♯',0,1],['Ré♭',1,1],['Ré',1,2],['Mi♭',2,3],['Mi',2,4],['Fa',3,5],['Fa♯',3,6],
+           ['Sol',4,7],['Sol♯',4,8],['La♭',5,8],['La',5,9],['Si♭',6,10],['Si',6,11]];
+  var ROM=['I','II','III','IV','V','VI','VII','I'];
+  var MAJ=[0,2,4,5,7,9,11,12];
+  var TABS=[['gammes','Gammes'],['modes','Modes'],['accords','Accords'],['cadences','Cadences'],['progressions','Progressions'],['notions','Notions']];
+  var S={tonic:0,tab:'gammes',accScale:'maj',cadMode:'maj',proMode:'maj'};
+
+  function note(t,k,o){
+    var pc=(t.pc+o)%12, li=(t.l+k)%7, d=((pc-NAT[li])%12+12)%12; if(d>6)d-=12;
+    return LET[li]+ACC[String(d)];
+  }
+  function lab(s){return s===1?'½':(s===2?'T':'1½')}
+  function cls(s){return s===1?'d':(s===2?'t':'td')}
+  function T(){var x=TON[S.tonic];return {n:x[0],l:x[1],pc:x[2]}}
+  function chips(items,active,act){
+    return '<div class="chips">'+items.map(function(x){
+      return '<button type="button" data-act="'+act+'" data-v="'+x[0]+'" aria-pressed="'+(x[0]===active)+'">'+x[1]+'</button>';
+    }).join('')+'</div>';
+  }
+
+  /* ---------- échelle (gammes et modes) ---------- */
+  function scaleCard(t,title,tag,steps,txt){
+    var offs=[0]; steps.forEach(function(s){offs.push(offs[offs.length-1]+s)});
+    var r1='',r2='',r3='',alts=[];
+    offs.forEach(function(o,k){
+      var diff=o-MAJ[k], alt=(k>0&&k<7&&diff!==0), pre=alt?(diff<0?'♭':'♯'):'';
+      r1+='<div class="deg'+(alt?' alt':'')+'">'+pre+ROM[k]+'</div>';
+      r2+='<div class="note'+(k===0||k===7?' tonic':'')+(alt?' alt':'')+'">'+note(t,k,o)+'</div>';
+      r3+='<div></div>';
+      if(k<7){var s=steps[k]; r1+='<div></div>'; r2+='<div class="link '+cls(s)+'"></div>'; r3+='<div class="pill '+cls(s)+'">'+lab(s)+'</div>';}
+    });
+    return '<article class="card"><header><h3>'+title+(tag?' <span class="mono" style="font-weight:500">'+tag+'</span>':'')+'</h3>'
+      +'<span class="num">'+steps.map(lab).join(' · ')+'</span></header>'
+      +'<div class="grid">'+r1+r2+r3+'</div>'+(txt?'<p>'+txt+'</p>':'')+'</article>';
+  }
+  var GAMMES=[
+    {k:'maj',name:'Gamme majeure',tag:'(ionien)',steps:[2,2,1,2,2,2,1],txt:'La référence. Deux demi-tons seulement, <b>III-IV</b> et <b>VII-I</b>.'},
+    {k:'nat',name:'Mineure naturelle',tag:'(éolien)',steps:[2,1,2,2,1,2,2],txt:'Trois degrés abaissés par rapport à la majeure : <b>♭III, ♭VI, ♭VII</b>. Demi-tons entre II-III et V-VI.'},
+    {k:'har',name:'Mineure harmonique',tag:'',steps:[2,1,2,2,1,3,1],txt:'Naturelle avec le <b>VII relevé</b>. Le ton et demi entre VI et VII est sa signature.'},
+    {k:'mel',name:'Mineure mélodique (montante)',tag:'',steps:[2,1,2,2,2,2,1],txt:'Naturelle avec <b>VI et VII relevés</b>. À la descente, elle redevient la mineure naturelle.'}
+  ];
+  var legendScale='<div class="panel"><div class="legend"><span><i class="t"></i>Ton (T)</span><span><i class="d"></i>Demi-ton (½)</span><span><i class="td"></i>Ton et demi (1½)</span><span><b class="ring"></b>Degré altéré par rapport à la majeure</span></div></div>';
+  legendScale=legendScale.replace('<b class="ring">','<b class="ring" style="display:inline-block;width:14px;height:14px;border-radius:50%;border:2px solid var(--c)">');
+
+  function vGammes(){
+    var t=T(), h=legendScale;
+    h+='<div class="panel"><p class="hint"><b>'+t.n+' majeur</b> a pour relatif <b>'+note(t,5,9)+' mineur</b> (mêmes notes). Son parallèle est <b>'+t.n+' mineur</b>, qui a pour relatif <b>'+note(t,2,3)+' majeur</b>.</p></div>';
+    GAMMES.forEach(function(g){h+=scaleCard(t,g.name,g.tag,g.steps,g.txt)});
+    return h;
+  }
+
+  /* ---------- modes ---------- */
+  var MODES=[
+    {g:'Majeurs',name:'Lydien',n:4,steps:[2,2,2,1,2,2,1],car:'♯IV',col:'Féerique'},
+    {g:'Majeurs',name:'Ionien (gamme majeure)',n:1,steps:[2,2,1,2,2,2,1],car:'Référence',col:'Joyeux'},
+    {g:'Majeurs',name:'Mixolydien',n:5,steps:[2,2,1,2,2,1,2],car:'♭VII',col:'Folklorique'},
+    {g:'Mineurs',name:'Dorien',n:2,steps:[2,1,2,2,2,1,2],car:'♯VI',col:'Doux-amer'},
+    {g:'Mineurs',name:'Éolien (gamme mineure)',n:6,steps:[2,1,2,2,1,2,2],car:'Référence',col:'Mélancolique'},
+    {g:'Mineurs',name:'Phrygien',n:3,steps:[1,2,2,2,1,2,2],car:'♭II',col:'Sombre'},
+    {g:'Mineurs',name:'Locrien',n:7,steps:[1,2,2,1,2,2,2],car:'♭II / ♭V',col:'Tendu'}
+  ];
+  function vModes(){
+    var t=T(), h='<div class="panel"><p class="hint">Les sept modes sur la même tonique (<b>'+t.n+'</b>), du plus lumineux au plus sombre. Le numéro est la position du mode dans la gamme majeure.</p></div>'+legendScale, last='';
+    MODES.forEach(function(m){
+      if(m.g!==last){h+='<h2 class="sec">'+m.g+'</h2>'; last=m.g;}
+      var s=scaleCard(t,m.name,'n°'+m.n,m.steps,'');
+      s=s.replace('</article>','<div class="meta"><span>Note caractéristique : <b>'+m.car+'</b></span><span>Couleur : <b>'+m.col+'</b></span></div></article>');
+      h+=s;
+    });
+    return h;
+  }
+
+  /* ---------- accords ---------- */
+  var SC={
+    maj:{label:'Majeur',steps:[2,2,1,2,2,2,1],t:'maj'},
+    nat:{label:'Mineur naturel',steps:[2,1,2,2,1,2,2],t:'min'},
+    har:{label:'Mineur harmonique',steps:[2,1,2,2,1,3,1],t:'min'},
+    mel:{label:'Mineur mélodique',steps:[2,1,2,2,2,2,1],t:'min'}
+  };
+  var FN=['T','SD','T','SD','D','T','D'], RM=['I','II','III','IV','V','VI','VII'];
+  var BOR={
+    maj:[['iv',3,5,'m','Sous-dominante mineure'],['♭VII',6,10,'','Emprunt au mixolydien'],['♭VI',5,8,'','Emprunt à l\'éolien'],
+         ['♭III',2,3,'','Emprunt à l\'éolien'],['♭II',1,1,'','Napolitaine, souvent en 6'],['I7',0,0,'7','Dominante secondaire de IV'],
+         ['II7',1,2,'7','Dominante secondaire de V'],['III7',2,4,'7','Dominante secondaire de vi'],['VI7',5,9,'7','Dominante secondaire de ii']],
+    min:[['I',0,0,'','Tierce picarde'],['IV',3,5,'','Emprunt au dorien'],['V7',4,7,'7','Dominante (sensible)'],
+         ['♭II',1,1,'','Napolitaine, souvent en 6'],['II7',1,2,'7','Dominante secondaire de V'],['♯vii°7',6,11,'°7','Sensible diminuée']]
+  };
+  function chordDeg(t,offs,ext,d){
+    var r=ext[d], th=ext[d+2]-r, fi=ext[d+4]-r, se=ext[d+6]-r;
+    var q=th===4&&fi===7?'M':th===3&&fi===7?'m':th===3&&fi===6?'dim':'aug';
+    var root=note(t,d,offs[d]), R=RM[d], low=(q==='m'||q==='dim');
+    var tri={r:(low?R.toLowerCase():R)+(q==='dim'?'°':q==='aug'?'+':''),n:root+(q==='m'?'m':q==='dim'?'°':q==='aug'?'+':'')};
+    var sfx,rs;
+    if(q==='M'){ if(se===11){sfx='maj7';rs=R+'maj7'}else{sfx='7';rs=R+'7'} }
+    else if(q==='m'){ if(se===10){sfx='m7';rs=R.toLowerCase()+'7'}else{sfx='m(maj7)';rs=R.toLowerCase()+'(maj7)'} }
+    else if(q==='dim'){ if(se===10){sfx='m7♭5';rs=R.toLowerCase()+'ø7'}else{sfx='°7';rs=R.toLowerCase()+'°7'} }
+    else { if(se===11){sfx='maj7♯5';rs=R+'+maj7'}else{sfx='7♯5';rs=R+'+7'} }
+    return {tri:tri,sev:{r:rs,n:root+sfx}};
+  }
+  function vAccords(){
+    var t=T(), s=SC[S.accScale], offs=[0]; s.steps.forEach(function(x){offs.push(offs[offs.length-1]+x)});
+    var ext=[]; for(var i=0;i<14;i++) ext.push(offs[i%7]+12*Math.floor(i/7));
+    var names=[]; for(var k=0;k<7;k++) names.push(note(t,k,offs[k]));
+    var h='<div class="panel"><h2 class="lab">Gamme</h2>'+chips(Object.keys(SC).map(function(k){return [k,SC[k].label]}),S.accScale,'acc')+'</div>';
+    h+='<section class="card"><header><h3>'+t.n+' '+(s.t==='maj'?'majeur':'mineur')+(s.t==='min'?' ('+s.label.replace('Mineur ','')+')':'')+'</h3></header>'
+      +'<p class="mono" style="margin:0 0 12px;overflow-wrap:anywhere">'+names.join(' · ')+'</p>'
+      +'<div class="legend" style="margin-bottom:10px"><span><b class="f fT">T</b>Tonique (repos)</span><span><b class="f fSD">SD</b>Sous-dominante (départ)</span><span><b class="f fD">D</b>Dominante (tension)</span></div>'
+      +'<div class="hd"><span>Rôle</span><span>Triade</span><span>Accord de 7e</span></div>';
+    for(var d=0;d<7;d++){
+      var c=chordDeg(t,offs,ext,d), f=FN[d];
+      h+='<div class="row"><span class="fn f'+f+'">'+f+'</span><div class="c"><span class="r">'+c.tri.r+'</span><span class="n">'+c.tri.n+'</span></div>'
+        +'<div class="c"><span class="r">'+c.sev.r+'</span><span class="n">'+c.sev.n+'</span></div></div>';
+    }
+    h+='</section><section class="card"><header><h3>Accords empruntés courants</h3></header><p class="hint" style="margin:0 0 10px">Hors de la gamme, mais très utilisés dans cette tonalité.</p><div class="cg">';
+    BOR[s.t].forEach(function(x){h+='<div class="bc"><div class="r">'+x[0]+'</div><div class="n">'+note(t,x[1],x[2])+x[3]+'</div><div class="d">'+x[4]+'</div></div>'});
+    h+='</div></section>';
+    return h;
+  }
+
+  /* ---------- cadences et progressions ---------- */
+  function C(r,k,o,q,b,goal){return {r:r,k:k,o:o,q:q,b:b||null,goal:!!goal};}
+  function chordName(t,c){var s=note(t,c.k,c.o)+c.q; if(c.b)s+='/'+note(t,c.b[0],c.b[1]); return s;}
+  function chain(t,list,kind){
+    return '<div class="chain">'+list.map(function(c,i){
+      return '<span class="it"><div class="ch'+(c.goal&&kind?' goal k-'+kind:'')+'"><span class="r">'+c.r+'</span><span class="n">'+chordName(t,c)+'</span></div>'
+        +(i<list.length-1?'<span class="arrow" aria-hidden="true">→</span>':'')+'</span>';
+    }).join('')+'</div>';
+  }
+  var CAD=[
+    {name:'Cadence parfaite',kind:'concl',kl:'Conclusive',
+     maj:{num:'5 → 1',ch:[C('V7',4,7,'7'),C('I',0,0,'',null,1)]},
+     min:{num:'5 → 1',ch:[C('V7',4,7,'7'),C('i',0,0,'m',null,1)]},
+     txt:'Le point final. La dominante (avec sa 7e, qui tire fort) résout sur la tonique. Elle est dite <b>parfaite</b> quand les deux accords sont à l\'état fondamental.'},
+    {name:'Cadence plagale',kind:'concl',kl:'Conclusive',
+     maj:{num:'4 → 1',ch:[C('IV',3,5,''),C('I',0,0,'',null,1)]},
+     min:{num:'4 → 1',ch:[C('iv',3,5,'m'),C('i',0,0,'m',null,1)]},
+     txt:'Le « Amen » des chants religieux. Plus douce que la parfaite : elle conclut sans la tension de la dominante.'},
+    {name:'Cadence plagale mineure',kind:'concl',kl:'Conclusive',only:'maj',onlyLabel:'accord emprunté au mineur',
+     maj:{num:'♭4 → 1',ch:[C('iv',3,5,'m'),C('I',0,0,'',null,1)]},
+     txt:'Le IV devient <b>mineur</b> (emprunté à la tonalité parallèle) et retombe sur la tonique majeure. Effet plus doux et mélancolique que la plagale classique. En mode mineur, la plagale ci-dessus est déjà <b>iv → i</b>.'},
+    {name:'Demi-cadence',kind:'susp',kl:'Suspensive',
+     maj:{num:'1 → 5',ch:[C('I',0,0,''),C('V',4,7,'',null,1)]},
+     min:{num:'1 → 5',ch:[C('i',0,0,'m'),C('V',4,7,'',null,1)]},
+     txt:'La virgule : on s\'arrête sur la dominante, la phrase attend une suite. On y arrive aussi depuis <b>ii</b> ou <b>IV</b> (ii → V, IV → V).'},
+    {name:'Cadence rompue',kind:'surp',kl:'Surprise',
+     maj:{num:'5 → 6',ch:[C('V',4,7,''),C('vi',5,9,'m',null,1)]},
+     min:{num:'5 → 6',ch:[C('V',4,7,''),C('VI',5,8,'',null,1)]},
+     txt:'On attend la tonique, on tombe sur le VI. Même point de départ que la parfaite, mais l\'oreille est déçue : la phrase continue.'},
+    {name:'Parfaite avec 6/4 cadentiel',kind:'concl',kl:'Conclusive',
+     maj:{num:'1 → 5 → 1',ch:[C('I6/4',0,0,'',[4,7]),C('V7',4,7,'7'),C('I',0,0,'',null,1)]},
+     min:{num:'1 → 5 → 1',ch:[C('i6/4',0,0,'m',[4,7]),C('V7',4,7,'7'),C('i',0,0,'m',null,1)]},
+     txt:'La tonique en 2e renversement (basse sur la quinte) retarde la dominante, puis résout. Le 6/4 se comporte comme un V avec retard : c\'est la cadence classique de fin de concerto.'},
+    {name:'Cadence modale ♭VII → I',kind:'concl',kl:'Conclusive (rock)',
+     maj:{num:'♭7 → 1',ch:[C('♭VII',6,10,''),C('I',0,0,'',null,1)]},
+     min:{num:'7 → 1',ch:[C('VII',6,10,''),C('i',0,0,'m',null,1)]},
+     txt:'Pas de dominante : le VII abaissé (emprunté au mixolydien en majeur, VII naturel en mineur) retombe sur la tonique. Très courante en rock et en pop.'},
+    {name:'Cadence phrygienne',kind:'susp',kl:'Suspensive',only:'min',
+     min:{num:'4 → 5',ch:[C('iv6',3,5,'m',[5,8]),C('V',4,7,'',null,1)]},
+     txt:'Propre au mineur. Le iv en 1er renversement (basse sur le ♭VI) descend d\'un demi-ton jusqu\'à la dominante. Son équivalent en mode phrygien est ♭II → I.'},
+    {name:'Cadence picarde',kind:'concl',kl:'Conclusive',only:'min',
+     min:{num:'5 → 1 majeur',ch:[C('V7',4,7,'7'),C('I',0,0,'',null,1)]},
+     txt:'Propre au mineur. On cadence sur l\'accord de tonique <b>majeur</b> à la place du mineur : une fin lumineuse dans une pièce sombre.'},
+    {name:'Cadence jazz II-V-I',kind:'concl',kl:'Conclusive',
+     maj:{num:'2 → 5 → 1',ch:[C('ii7',1,2,'m7'),C('V7',4,7,'7'),C('Imaj7',0,0,' maj7',null,1)]},
+     min:{num:'2 → 5 → 1',ch:[C('iiø7',1,2,'m7♭5'),C('V7',4,7,'7'),C('i7',0,0,'m7',null,1)]},
+     txt:'La cadence parfaite précédée de son sous-dominant (ii). Brique de base de l\'harmonie jazz : chaque accord est la dominante du suivant.'}
+  ];
+  function vCadences(){
+    var t=T();
+    var h='<div class="panel"><h2 class="lab">Mode</h2>'+chips([['maj','Majeur'],['min','Mineur']],S.cadMode,'cad')
+      +'<div class="legend" style="margin-top:12px"><span><b class="f fT">&nbsp;</b>Conclusive</span><span><b class="f fSD">&nbsp;</b>Suspensive</span><span><b class="f fD">&nbsp;</b>Surprise</span></div></div>';
+    CAD.forEach(function(cd){
+      var only=cd.only, m=only||S.cadMode, d=cd[m];
+      h+='<article class="card"><header><h3>'+cd.name+'</h3><span class="tag k-'+cd.kind+'">'+cd.kl+'</span>'
+        +(only?'<span class="only">'+(cd.onlyLabel||(only==='min'?'mineur uniquement':'majeur uniquement'))+'</span>':'')
+        +'<span class="num">'+d.num+'</span></header>'+chain(t,d.ch,cd.kind)+'<p>'+cd.txt+'</p></article>';
+    });
+    return h;
+  }
+
+  var PRO=[
+    {m:'maj',name:'Pop I – V – vi – IV',num:'1 · 5 · 6 · 4',ch:[C('I',0,0,''),C('V',4,7,''),C('vi',5,9,'m'),C('IV',3,5,'')],
+     txt:'La progression pop par excellence.',ex:'Ex. : « Let It Be » (Beatles)'},
+    {m:'maj',name:'vi – IV – I – V',num:'6 · 4 · 1 · 5',ch:[C('vi',5,9,'m'),C('IV',3,5,''),C('I',0,0,''),C('V',4,7,'')],
+     txt:'Les mêmes accords que la précédente, mais on démarre sur le vi : l\'ambiance est plus sombre et plus émotive.'},
+    {m:'maj',name:'Années 50 : I – vi – IV – V',num:'1 · 6 · 4 · 5',ch:[C('I',0,0,''),C('vi',5,9,'m'),C('IV',3,5,''),C('V',4,7,'')],
+     txt:'La boucle du doo-wop et du rock\'n\'roll.',ex:'Ex. : « Stand by Me » (Ben E. King)'},
+    {m:'maj',name:'Trois accords : I – IV – V',num:'1 · 4 · 5',ch:[C('I',0,0,''),C('IV',3,5,''),C('V',4,7,'')],
+     txt:'Tonique, sous-dominante, dominante : les trois fonctions de la tonalité, base du rock et du blues.'},
+    {m:'maj',name:'Turnaround I – vi – ii – V',num:'1 · 6 · 2 · 5',ch:[C('I',0,0,''),C('vi',5,9,'m'),C('ii',1,2,'m'),C('V',4,7,'')],
+     txt:'Chaque accord descend en quintes : très utilisée pour boucler une grille (jazz, standards).'},
+    {m:'maj',name:'II – V – I',num:'2 · 5 · 1',ch:[C('ii7',1,2,'m7'),C('V7',4,7,'7'),C('Imaj7',0,0,' maj7')],
+     txt:'La cadence jazz, utilisée comme progression complète.'},
+    {m:'maj',name:'Canon de Pachelbel',num:'1 · 5 · 6 · 3 · 4 · 1 · 4 · 5',
+     ch:[C('I',0,0,''),C('V',4,7,''),C('vi',5,9,'m'),C('iii',2,4,'m'),C('IV',3,5,''),C('I',0,0,''),C('IV',3,5,''),C('V',4,7,'')],
+     txt:'Une basse qui descend par degrés conjoints sur huit accords.',ex:'Ex. : « Canon en Ré » (Pachelbel)'},
+    {m:'maj',name:'Mixolydienne I – ♭VII – IV',num:'1 · ♭7 · 4',ch:[C('I',0,0,''),C('♭VII',6,10,''),C('IV',3,5,'')],
+     txt:'Le ♭VII emprunté donne une couleur rock et folk.'},
+    {m:'maj',name:'Blues en 12 mesures',num:'12 mesures',blues:[[0,0,'7','I7'],[0,0,'7','I7'],[0,0,'7','I7'],[0,0,'7','I7'],[3,5,'7','IV7'],[3,5,'7','IV7'],[0,0,'7','I7'],[0,0,'7','I7'],[4,7,'7','V7'],[3,5,'7','IV7'],[0,0,'7','I7'],[4,7,'7','V7']],
+     txt:'Une mesure par accord, trois lignes de quatre mesures.'},
+    {m:'min',name:'Épique i – VI – III – VII',num:'1 · 6 · 3 · 7',ch:[C('i',0,0,'m'),C('VI',5,8,''),C('III',2,3,''),C('VII',6,10,'')],
+     txt:'Boucle très employée en pop, rock et musique de film : elle monte puis revient.'},
+    {m:'min',name:'Andalouse i – VII – VI – V',num:'1 · 7 · 6 · 5',ch:[C('i',0,0,'m'),C('VII',6,10,''),C('VI',5,8,''),C('V',4,7,'')],
+     txt:'Basse descendante qui finit sur la dominante, d\'origine flamenco.',ex:'Ex. : « Hit the Road Jack » (Ray Charles)'},
+    {m:'min',name:'i – iv – V',num:'1 · 4 · 5',ch:[C('i',0,0,'m'),C('iv',3,5,'m'),C('V',4,7,'')],
+     txt:'Les trois fonctions en mineur, avec la dominante majeure.'},
+    {m:'min',name:'i – VI – VII',num:'1 · 6 · 7',ch:[C('i',0,0,'m'),C('VI',5,8,''),C('VII',6,10,'')],
+     txt:'Trois accords qui montent : très employée en rock.'},
+    {m:'min',name:'i – iv – VII – III',num:'1 · 4 · 7 · 3',ch:[C('i',0,0,'m'),C('iv',3,5,'m'),C('VII',6,10,''),C('III',2,3,'')],
+     txt:'Une boucle en quartes qui revient sur le relatif majeur.'},
+    {m:'min',name:'ii° – V – i',num:'2 · 5 · 1',ch:[C('iiø7',1,2,'m7♭5'),C('V7',4,7,'7'),C('i7',0,0,'m7')],
+     txt:'Le II-V-I du jazz en mineur.'},
+    {m:'min',name:'Blues mineur en 12 mesures',num:'12 mesures',blues:[[0,0,'m7','i7'],[0,0,'m7','i7'],[0,0,'m7','i7'],[0,0,'m7','i7'],[3,5,'m7','iv7'],[3,5,'m7','iv7'],[0,0,'m7','i7'],[0,0,'m7','i7'],[5,8,'7','♭VI7'],[4,7,'7','V7'],[0,0,'m7','i7'],[4,7,'7','V7']],
+     txt:'Même forme que le blues majeur, avec les accords du mineur.'}
+  ];
+  function vProg(){
+    var t=T();
+    var h='<div class="panel"><h2 class="lab">Mode</h2>'+chips([['maj','Majeur'],['min','Mineur']],S.proMode,'pro')+'</div>';
+    PRO.filter(function(p){return p.m===S.proMode}).forEach(function(p){
+      var body;
+      if(p.blues){
+        body='<div class="bars">'+p.blues.map(function(b){return '<div class="ch"><span class="r">'+b[3]+'</span><span class="n">'+note(t,b[0],b[1])+b[2]+'</span></div>'}).join('')+'</div>';
+      } else body=chain(t,p.ch,null);
+      h+='<article class="card"><header><h3>'+p.name+'</h3><span class="num">'+p.num+'</span></header>'+body
+        +'<p>'+p.txt+(p.ex?' <b>'+p.ex+'</b>':'')+'</p></article>';
+    });
+    return h;
+  }
+
+  /* ---------- notions ---------- */
+  function vNotions(){
+    var t=T(), rel=note(t,5,9);
+    var Q=[
+      ['Tonique','<p>La note de départ et de repos d\'une gamme, celle qui donne son nom à la tonalité (le 1er degré). En Do majeur, c\'est Do. L\'accord construit dessus est l\'accord de « maison ».</p>'],
+      ['Tonique, fondamentale, basse','<ul><li><b>Tonique</b> : la note principale d\'une gamme ou d\'une tonalité.</li><li><b>Fondamentale</b> : la note de base d\'un accord, celle sur laquelle on empile les tierces. Dans Fam7, c\'est Fa.</li><li><b>Basse</b> : la note la plus grave jouée. Dans Si♭m7/Fa, la fondamentale est Si♭ mais la basse est Fa.</li></ul><p>Elles coïncident pour l\'accord de tonique, mais pas pour les autres accords.</p>'],
+      ['Mode relatif et mode parallèle','<ul><li><b>Relatifs</b> : mêmes notes, tonique différente. Do ionien et La éolien : <b>'+t.n+' majeur</b> et <b>'+rel+' mineur</b>.</li><li><b>Parallèles</b> : même tonique, notes différentes. Do ionien et Do éolien diffèrent par trois notes (les degrés III, VI et VII).</li></ul>'],
+      ['Ionien et éolien','<p>L\'ionien est la gamme majeure (1er mode), l\'éolien la mineure naturelle (6e mode). Sur une même gamme, l\'éolien est le 6e degré de l\'ionien. Sur la même tonique, ils ne diffèrent que par la tierce, la sixte et la septième, abaissées d\'un demi-ton.</p>'],
+      ['Triade et accord de 7e','<p>Une <b>triade</b> empile deux tierces (fondamentale, tierce, quinte). Un <b>accord de 7e</b> en ajoute une troisième. Selon les tierces choisies, on obtient majeur, mineur, diminué ou augmenté.</p>'],
+      ['Tonique, sous-dominante, dominante','<ul><li><b>Tonique (T)</b> : repos (I, iii, vi).</li><li><b>Sous-dominante (SD)</b> : départ, on s\'éloigne de la tonique (ii, IV).</li><li><b>Dominante (D)</b> : tension, qui tire vers la tonique (V, vii°).</li></ul>'],
+      ['Mesure binaire ou ternaire','<ul><li><b>Mesure</b> : le 2/4 et le 4/4 sont binaires, le 3/4 ternaire (trois temps par mesure).</li><li><b>Subdivision du temps</b> : en 2 (croches droites) c\'est binaire, en 3 (triolets, swing, 6/8, 12/8) c\'est ternaire.</li></ul><p>Une valse en 3/4 a donc une mesure ternaire avec des temps subdivisés en deux.</p>']
+    ];
+    return Q.map(function(q,i){return '<details'+(i===0?' open':'')+'><summary>'+q[0]+'</summary>'+q[1]+'</details>'}).join('');
+  }
+
+  var VIEWS={gammes:vGammes,modes:vModes,accords:vAccords,cadences:vCadences,progressions:vProg,notions:vNotions};
+  var tonicsEl=document.getElementById('tonics'), tabsEl=document.getElementById('tabs'), viewEl=document.getElementById('view');
+
+  function render(){
+    tonicsEl.innerHTML=TON.map(function(x,i){return '<button type="button" data-act="tonic" data-v="'+i+'" aria-pressed="'+(i===S.tonic)+'">'+x[0]+'</button>'}).join('');
+    tabsEl.innerHTML=TABS.map(function(x){return '<button type="button" role="tab" data-act="tab" data-v="'+x[0]+'" aria-selected="'+(x[0]===S.tab)+'">'+x[1]+'</button>'}).join('');
+    viewEl.innerHTML=VIEWS[S.tab]();
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('[data-act]'); if(!b)return;
+    var a=b.dataset.act, v=b.dataset.v;
+    if(a==='tonic')S.tonic=+v;
+    else if(a==='tab'){S.tab=v; try{history.replaceState(null,'','#'+v)}catch(x){}}
+    else if(a==='acc')S.accScale=v;
+    else if(a==='cad')S.cadMode=v;
+    else if(a==='pro')S.proMode=v;
+    var keep=window.scrollY; render(); if(a!=='tab')window.scrollTo(0,keep);
+  });
+  function fromHash(){var h=(location.hash||'').slice(1); if(VIEWS[h])S.tab=h;}
+  window.addEventListener('hashchange',function(){fromHash();render()});
+  fromHash(); render();
+})();
+</script>
+
+</html>
